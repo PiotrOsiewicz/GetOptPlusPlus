@@ -26,14 +26,18 @@ class Command: public Argument{
 		const int& GetIndex(void) const;
 		virtual void Execute(void) = 0;
 	private:
+		int MinArgCnt = 0;
+		int MaxArgCnt = 0;
 		int Index;
 		std::string Name;
 		std::vector<Argument*> Arguments;
+		std::vector<std::string> AcceptedArguments;
 };
 
 class GOppParser{
 	public:
 		GOppParser(int argc, char** argv);
+		~GOppParser();
 		const int& GetArgCnt(void) const;
 		const std::vector<Argument*>& GetArgumentList(void) const;
 		const std::vector<Command*>& GetCommandList(void) const; 
@@ -88,4 +92,15 @@ GOppParser::GOppParser(int argc, char **argv): ArgCnt(argc)
 		ArgList.push_back(A);
 	}
 	ArgumentList = ArgList;
+}
+
+GOppParser::~GOppParser()
+{
+	for(int i = 0;i < ArgumentList.size(); i++){
+		delete ArgumentList[i];
+	}
+}
+void GOppParser::Parse(std::vector<Argument> Argv)
+{
+
 }
