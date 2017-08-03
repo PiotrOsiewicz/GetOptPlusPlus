@@ -8,7 +8,11 @@ lightweight and performance-focused.
 ### Usage
 
 Include getopt++.h in your source file and construct the GOppParser with argc
-as first parameter and argv as second parameter.
+as first parameter and argv as second parameter.  
+
+
+    GOpp::Parser CommandLine(argc,argv,{{LongName,ShortName,MinArgCnt,MaxArgCnt,{AcceptedArguments}}}).  
+
 
 ### FAQ
 Yet to be added.
