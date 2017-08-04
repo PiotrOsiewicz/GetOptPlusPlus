@@ -15,4 +15,10 @@ as first parameter and argv as second parameter.
 
 
 ### FAQ
-Yet to be added.
+#### Thrown exceptions:  
+	std::invalid_argument for null argv or empty vector passed to Parser
+	constructor.  
+	std::string for unrecognized arguments (argument name is thrown).  
+	unsigned long for insufficient amount of arguments.  
+	
+      
