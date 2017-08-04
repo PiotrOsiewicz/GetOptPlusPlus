@@ -24,13 +24,17 @@ class CommandDefinition{
 		int MinArgCount = 0;
 		int MaxArgCount = 0;
 		const std::vector<std::string> AcceptedArguments = std::vector<std::string>();
+		bool operator==(std::string Argument) const;
 };
 
 class Command{
 	public:
 		const CommandDefinition GetConfig(void) const;
 		const int& GetIndex(void) const;
+		const std::vector<std::string> GetArguments(void) const;
 		Command(int index,CommandDefinition Parameters);
+		bool operator[](std::string Argument) const;
+		bool operator==(std::string Argument) const;
 	private:
 		bool ValidateArgCount(void) const;
 		bool AddArgument(std::string Argument);
@@ -50,6 +54,7 @@ class Parser{
 		const std::vector<std::string>& GetArguments(void) const;
 		const std::vector<std::shared_ptr<Command>> GetCommands(void) const; 
 		const std::string& GetProgramName(void) const;
+		bool operator[](std::string Argument) const;
 	private:
 		bool AddCommand(std::string Argument, int indice,
 				std::vector<CommandDefinition> CommandParameters);
@@ -97,11 +102,21 @@ const std::string& Parser::GetProgramName(void) const
 {
 	return ProgramName;
 }
+
+bool Parser::operator[](std::string Argument) const
+{
+	for(int i = 0 ; i < Commands.size() ; i++){
+		if(Commands[i]->Config ==  Argument ){
+			return true;
+		}
+	}
+	return false;
+}
+
 bool Parser::AddCommand(std::string Argument,int Indice, std::vector<CommandDefinition> CommandParameters)
 {
 	for(int b = 0 ; b < CommandParameters.size() ; b++){
-		if( Argument == CommandParameters[b].LongName ||
-				Argument == CommandParameters[b].ShortName){
+		if(CommandParameters[b] == Argument){
 			std::shared_ptr<Command> Temp(new Command(Indice,CommandParameters[b]));
 			this->Commands.push_back(Temp);
 			return true;
@@ -135,9 +150,34 @@ const CommandDefinition Command::GetConfig(void) const
 	return Config;
 }
 
+const int& Command::GetIndex(void) const
+{
+	return Index;
+}
+
+const std::vector<std::string> Command::GetArguments(void) const
+{
+	return Arguments;
+}
+
 Command::Command(int index,CommandDefinition Parameters):
 		Index(index),Config(Parameters)
 {
+}
+
+bool Command::operator[](std::string Argument) const
+{
+	for(int i = 0 ; i < Arguments.size() ; i++){
+		if(Arguments[i] == Argument){
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Command::operator==(std::string Argument) const
+{
+	return Config ==  Argument;
 }
 
 bool Command::AddArgument(std::string Argument)
@@ -162,6 +202,11 @@ bool Command::ValidateArgCount(void) const
 {
 	return (Config.MaxArgCount == -1 || Arguments.size() <= Config.MaxArgCount)
 		&& Arguments.size() >= Config.MinArgCount;
+}
+
+bool CommandDefinition::operator==(std::string Argument) const
+{
+	return LongName == Argument || ShortName == Argument;
 }
 
 static std::vector<std::string> ConvertArgvToVect(int argc,char **argv)
