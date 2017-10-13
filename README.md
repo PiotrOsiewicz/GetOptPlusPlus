@@ -1,6 +1,6 @@
 ## GetOpt++
 ### C++ Library for command-line argument parsing
-#### Current version: 0.1.0
+#### Current version: 0.1.0 - version number frozen
 
 GetOpt++ is a small library for command-line argument parsing. It is
 lightweight and performance-focused.
