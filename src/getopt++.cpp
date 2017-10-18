@@ -1,72 +1,5 @@
-/* GetOpt++ - a lightweight parser for command-line arguments.
- * Author: Piotr Osiewicz
- * License: MIT
- * Usage: Include this file in your project and initialize Parser
- */
-#ifndef GetOptPlusPlus
-#define GetOptPlusPlus
-
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <vector>
-#include <initializer_list>
-
-namespace GOpp{
-
-class Parser; 
-
-static std::vector<std::string> ConvertArgvToVect(int argc,char **argv);
-
-class Command{
-	public:
-		struct Definition{
-			std::string LongName;
-			std::string ShortName;
-			int MinArgCount;
-			int MaxArgCount;
-			std::vector<std::string> AcceptedArguments;
-			bool operator==(std::string Argument) const;
-		};
-		const Command::Definition GetProperties(void) const;
-		const int& GetIndex(void) const;
-		const std::vector<std::string> GetArguments(void) const;
-		Command(int index,Definition Parameters);
-		bool operator[](std::string Argument) const;
-		bool operator==(std::string Argument) const;
-	private:
-		bool ValidateArgCount(void) const;
-		bool AddArgument(std::string Argument);
-		int Index = 0;
-		const Definition Properties;
-		std::vector<std::string> Arguments;
-		friend Parser;
-};
-
-
-
-class Parser{
-	public:
-		Parser(int argc, char** argv,
-			const std::initializer_list<Command::Definition> CommandParameters = std::initializer_list<Command::Definition>());
-		Parser(std::vector<std::string> Parameters,
-			const std::vector<Command::Definition> CommandParameters = std::vector<Command::Definition>());
-		Parser(const std::initializer_list<std::string> Parameters,const std::initializer_list<Command::Definition> CommandParameters);
-		const int& GetArgCount(void) const;
-		const std::vector<std::string>& GetArguments(void) const;
-		const std::vector<std::shared_ptr<Command>> GetCommands(void) const; 
-		const std::string& GetProgramName(void) const;
-		bool operator[](std::string Argument) const;
-	private:
-		bool AddCommand(std::string Argument, int indice,
-				std::vector<Command::Definition> CommandParameters);
-		void Parse(std::vector<std::string> Arguments, 
-				std::vector<Command::Definition> CommandParameters);
-		std::vector<std::shared_ptr<Command>> Commands;
-		std::vector<std::string> Arguments;
-		int ArgCount;
-		std::string ProgramName;
-};
+#include <getopt++.h>
+using namespace GOpp;
 
 Parser::Parser(int argc, char** argv,const std::initializer_list<Command::Definition> CommandParameters):
 	Parser(ConvertArgvToVect(argc,argv),std::vector<Command::Definition>(CommandParameters.begin(),CommandParameters.end()))
@@ -81,38 +14,42 @@ Parser::Parser(std::initializer_list<std::string> Parameters,
 }
 
 Parser::Parser(std::vector<std::string> Parameters,
-		const std::vector<Command::Definition> CommandParameters):
-	ArgCount(Parameters.size())
+		const std::vector<Command::Definition> CommandParameters)
 {
 	if(Parameters.size() <= 0) {
 		throw std::invalid_argument("Parameters");
 	} 
 	ProgramName = Parameters[0];
 	Arguments = Parameters;
+	try{
+		ArgSymTable = BuildSymTable<std::string,Command::Definition>(CommandParameters,
+				[](Command::Definition Def) {return Def.AcceptedArguments; });
+		ParSymTable = BuildSymTable<std::string, Command::Definition>(CommandParameters,
+				[](Command::Definition Def) {return Def.ValidNames; });
+	} catch(std::logic_error){
+		throw;
+	}
 	this->Parse(Arguments,std::vector<Command::Definition>(CommandParameters.begin(),CommandParameters.end()));
-}
-
-const int& Parser::GetArgCount(void) const
-{
-	return ArgCount;
 }
 
 const std::vector<std::string>& Parser::GetArguments(void) const
 {
 	return Arguments;
 }
+
 const std::vector<std::shared_ptr<Command>> Parser::GetCommands(void) const
 {
 	return Commands;
 }
 
-const std::string& Parser::GetProgramName(void) const
+const std::string Parser::GetProgramName(void) const
 {
 	return ProgramName;
 }
 
 bool Parser::operator[](std::string Argument) const
 {
+	//Was given 'Argument' used
 	for(int i = 0 ; i < Commands.size() ; i++){
 		if(Commands[i]->Properties ==  Argument ){
 			return true;
@@ -136,24 +73,26 @@ bool Parser::AddCommand(std::string Argument,int Indice, std::vector<Command::De
 void Parser::Parse(std::vector<std::string> Argv,std::vector<Command::Definition> CommandParameters)
 {
 	for(int a = 1;a<Argv.size();a++){
-		bool WasUsed = this->AddCommand(Argv[a],a,CommandParameters);
-		if(WasUsed == false) { 
-			for(int b = 0; b<Commands.size() && !WasUsed;b++){
-				WasUsed = Commands[b]->AddArgument(Argv[a]);
-			}
-		}
-		if(WasUsed == false) {
-			throw Argv[a];
+		if(LastUsedCommand != nullptr && (LastUsedCommand->HasArgument(Argv[a]) ||
+					LastUsedCommand->Properties.MaxArgCount == -1) && ParSymTable.find(Argv[a]) == ParSymTable.end()) {
+			//If Argv[a] is not valid name, then it might be an argument to some preexisting function
+			LastUsedCommand->AddArgument(Argv[a]);
+		} else if(ParSymTable.find(Argv[a]) != ParSymTable.end()){
+			this->AddCommand(Argv[a],a,CommandParameters);
+			LastUsedCommand = Commands.back();
+		} else{
+			throw std::invalid_argument(Argv[a]);
 		}
 	}
 	for(int b  = 0 ; b<Commands.size() ; b++){
-		if(Commands[b]->ValidateArgCount() == false){
-			throw Commands[b]->Properties.MinArgCount - Commands[b]->Arguments.size();
+		if(Commands[b]->HasValidArgCount() == false){
+			throw std::invalid_argument("");
 		}
 	}
 }
 
-const Command::Definition Command::GetProperties(void) const
+
+const Command::Definition& Command::GetProperties(void) const
 {
 	return Properties;
 }
@@ -163,7 +102,7 @@ const int& Command::GetIndex(void) const
 	return Index;
 }
 
-const std::vector<std::string> Command::GetArguments(void) const
+const std::vector<std::string>& Command::GetArguments(void) const
 {
 	return Arguments;
 }
@@ -175,6 +114,7 @@ Command::Command(int index,Command::Definition Parameters):
 
 bool Command::operator[](std::string Argument) const
 {
+	//Was given 'Argument' used?
 	for(int i = 0 ; i < Arguments.size() ; i++){
 		if(Arguments[i] == Argument){
 			return true;
@@ -206,29 +146,41 @@ bool Command::AddArgument(std::string Argument)
 	return false;
 }
 
-bool Command::ValidateArgCount(void) const
+bool Command::HasValidArgCount(void) const
 {
 	return (Properties.MaxArgCount == -1 || Arguments.size() <= Properties.MaxArgCount)
 		&& Arguments.size() >= Properties.MinArgCount;
 }
 
-bool Command::Definition::operator==(std::string Argument) const
+bool Command::HasArgument(const std::string& CandArg) const
 {
-	return LongName == Argument || ShortName == Argument;
+	return std::find(Properties.AcceptedArguments.begin(),Properties.AcceptedArguments.end(),CandArg)
+		!= Properties.AcceptedArguments.end()/* || ((Properties.Flags & NoLimit) != false)*/;
 }
 
-static std::vector<std::string> ConvertArgvToVect(int argc,char **argv)
+bool Command::HasName(const std::string& CandName) const
+{
+	return std::find(Properties.ValidNames.begin(),Properties.ValidNames.end(),CandName) != Properties.ValidNames.end();
+}
+
+bool Command::Definition::operator==(std::string Argument) const
+{
+	return std::find(ValidNames.begin(),ValidNames.end(),Argument) != ValidNames.end();
+}
+
+std::vector<std::string> GOpp::ConvertArgvToVect(int argc,char **argv)
 {
 	if(argv == nullptr || argc < 1) {
 		throw std::invalid_argument("Argv");
 	} 
 	std::vector<std::string> ArgList;
 	for(int i = 0;i<argc;i++){
+		if(argv[i] == nullptr){
+			throw std::invalid_argument("nullptr");
+		}
 		std::string temp(argv[i]);
 		ArgList.push_back(temp);
 	}
 	return ArgList;
 }
-}
 
-#endif

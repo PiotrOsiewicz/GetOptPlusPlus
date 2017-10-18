@@ -11,14 +11,16 @@ Include getopt++.h in your source file and construct the GOppParser with argc
 as first parameter and argv as second parameter.  
 
 
-    GOpp::Parser CommandLine(argc,argv,{{LongName,ShortName,MinArgCnt,MaxArgCnt,{AcceptedArguments}}}).  
+    GOpp::Parser CommandLine(argc,argv,{{{PossibleNames},{AcceptedArguments},MinArgCnt,MaxArgCnt}}}).  
 
 
 ### FAQ
 #### Thrown exceptions:  
-	std::invalid_argument for null argv or empty vector passed to Parser
-	constructor.  
-	std::string for unrecognized arguments (argument name is thrown).  
-	unsigned long for insufficient amount of arguments.  
+	std::invalid_argument:
+	1. null argv or empty vector passed to Parser constructor.  
+	2. Unrecognized arguments.
+	std::logic_error:
+	1. Parameter and argument names collide during parsing.
+This list is incomplete.
 	
       
