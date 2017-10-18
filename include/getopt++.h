@@ -66,12 +66,13 @@ class Command{
 		const Definition& GetProperties(void) const;
 		const int& GetIndex(void) const;
 		const std::vector<std::string>& GetArguments(void) const;
+		bool HasName(const std::string& CandName) const;
+		bool HasArgument(const std::string& CandArg) const;
 		bool operator[](const std::string Argument) const;
 		bool operator==(std::string Argument) const;
 	private:
 		bool HasValidArgCount(void) const;
-		bool HasName(const std::string& CandName) const;
-		bool HasArgument(const std::string& CandArg) const;
+
 		bool AddArgument(std::string Argument);
 		int Index = 0;
 		const Definition Properties;

@@ -58,5 +58,7 @@ Test(Constructor,InitializesCommandsProperly)
 	cr_assert(Parser.GetCommands().size() == 1);
 	cr_assert(Parser.GetProgramName() == "./test");
 	cr_assert(Parser.GetProgramName() == Parser.GetArguments()[0]);
+	cr_assert(Parser.GetCommands()[0]->GetIndex() == 1);
+	cr_assert(Parser.GetCommands()[0]->HasName("-l") == true);
 }
 

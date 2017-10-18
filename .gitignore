@@ -1,2 +1,5 @@
 *.un~
 *.out
+*.gcda
+*.gcno
+*.swp
