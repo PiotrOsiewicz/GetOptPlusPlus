@@ -29,6 +29,9 @@ Parser::Parser(std::vector<std::string> Parameters,
 	} catch(std::logic_error){
 		throw;
 	}
+	if(AreSymTablesColliding<std::string>(ArgSymTable,ParSymTable) == true){
+		throw std::logic_error("");
+	}
 	this->Parse(Arguments,std::vector<Command::Definition>(CommandParameters.begin(),CommandParameters.end()));
 }
 

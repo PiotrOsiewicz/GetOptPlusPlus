@@ -60,5 +60,7 @@ Test(Constructor,InitializesCommandsProperly)
 	cr_assert(Parser.GetProgramName() == Parser.GetArguments()[0]);
 	cr_assert(Parser.GetCommands()[0]->GetIndex() == 1);
 	cr_assert(Parser.GetCommands()[0]->HasName("-l") == true);
+	cr_assert(Parser["-l"] == true);
+	cr_assert((*Parser.GetCommands()[0])["pl-pl"] == true);
 }
 

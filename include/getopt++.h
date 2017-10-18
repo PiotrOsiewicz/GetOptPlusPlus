@@ -37,10 +37,10 @@ std::set<T> BuildSymTable(std::vector<X> Source, std::function<std::vector<T>(X)
 }
 
 template<typename T>
-bool AreSymTableColliding(std::set<T> First,std::set<T> Second)
+bool AreSymTablesColliding(std::set<T> First,std::set<T> Second)
 {
 	for(auto a: First){
-		if(Second.at(a) != Second.end()){
+		if(Second.find(a) != Second.end()){
 			return true;
 		}
 	}

@@ -8,7 +8,6 @@ lightweight and performance-focused.
 [Documentation](http://getoptplusplus.readthedocs.io/en/latest/)  
 
 [![codecov](https://codecov.io/gh/PiotrOsiewicz/GetOptPlusPlus/branch/master/graph/badge.svg)](https://codecov.io/gh/PiotrOsiewicz/GetOptPlusPlus)
-
 [![BuildStatus](https://travis-ci.org/PiotrOsiewicz/GetOptPlusPlus.svg?branch=master)](https://travis-ci.org/PiotrOsiewicz/GetOptPlusPlus)
 
 ### Usage
