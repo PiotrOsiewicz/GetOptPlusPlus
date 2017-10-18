@@ -5,7 +5,7 @@
 GetOpt++ is a small library for command-line argument parsing. It is
 lightweight and performance-focused.
 
-### [Documentation](http://getoptplusplus.readthedocs.io/en/latest/)
+###  [Documentation](http://getoptplusplus.readthedocs.io/en/latest/)
 
 ### Usage
 
