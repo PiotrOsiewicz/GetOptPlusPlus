@@ -5,6 +5,8 @@
 GetOpt++ is a small library for command-line argument parsing. It is
 lightweight and performance-focused.
 
+### [Documentation](http://getoptplusplus.readthedocs.io/en/latest/)
+
 ### Usage
 
 Include getopt++.h in your source file and construct the GOppParser with argc
