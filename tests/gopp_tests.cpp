@@ -49,6 +49,7 @@ Test(Constructor,InitializesProperly)
 	cr_assert(Parser.GetCommands().size() == 0);
 	cr_assert(Parser.GetProgramName() == "./test");
 	cr_assert(Parser.GetProgramName() == Parser.GetArguments()[0]);
+	cr_assert(Parser["test"] == false);
 }
 
 Test(Constructor,InitializesCommandsProperly)
@@ -62,5 +63,7 @@ Test(Constructor,InitializesCommandsProperly)
 	cr_assert(Parser.GetCommands()[0]->HasName("-l") == true);
 	cr_assert(Parser["-l"] == true);
 	cr_assert((*Parser.GetCommands()[0])["pl-pl"] == true);
+	cr_assert((*Parser.GetCommands()[0]) == "-l");
+	cr_assert((*Parser.GetCommands()[0]).GetArguments().size() == 1);
 }
 
