@@ -1,11 +1,12 @@
-## GetOpt++
+![GetOpt++ Logo](/getoptpp_logo.png)
+
 ### C++ Library for command-line argument parsing
 #### Current version: 0.1.0 - version number frozen
 
 GetOpt++ is a small library for command-line argument parsing. It is
 lightweight and performance-focused.
 
-[Documentation](http://getoptplusplus.readthedocs.io/en/latest/)  
+[Documentation - under construction](http://getoptplusplus.readthedocs.io/en/latest/)  
 
 [![codecov](https://codecov.io/gh/PiotrOsiewicz/GetOptPlusPlus/branch/master/graph/badge.svg)](https://codecov.io/gh/PiotrOsiewicz/GetOptPlusPlus)
 [![BuildStatus](https://travis-ci.org/PiotrOsiewicz/GetOptPlusPlus.svg?branch=master)](https://travis-ci.org/PiotrOsiewicz/GetOptPlusPlus)
