@@ -21,10 +21,17 @@ objects.
 
 ----
 
+.. cpp:function:: GOpp::Parser::Parser(const std::vector<std::string> Parameters, const std::vector<Command::Definition> CommandParameters)
+
+   :arg Parameters: Command line parameters. Size will be deduced from vector size.
+   :arg CommandParameters: Definitions of viable parameters, along with their accepted arguments and flags.
+   :returns: None:
+   :throws invalid_argument: If 'argc' is smaller than 1.
+   :throws logic_error: If `CommandParameters` Contains clashing names.
+
 .. cpp:function:: GOpp::Parser::Parser(const std::initializer_list<std::string> Parameters,const std::initializer_list<Command::Definition> CommandParameters)
 
-   All other constructors delegate work to this one (after morphing input
-   data to fit this one).
+   Delegates work to vector-based constructor.
 
    :arg Parameters: Command line parameters. Size will be deduced from container size.
    :arg CommandParameters: Definitions of viable parameters, along with their accepted arguments and flags.

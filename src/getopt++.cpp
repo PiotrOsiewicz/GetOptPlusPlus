@@ -35,26 +35,11 @@ Parser::Parser(std::vector<std::string> Parameters,
 	this->Parse(Arguments,std::vector<Command::Definition>(CommandParameters.begin(),CommandParameters.end()));
 }
 
-const std::vector<std::string>& Parser::GetArguments(void) const
-{
-	return Arguments;
-}
-
-const std::vector<std::shared_ptr<Command>> Parser::GetCommands(void) const
-{
-	return Commands;
-}
-
-const std::string Parser::GetProgramName(void) const
-{
-	return ProgramName;
-}
-
 bool Parser::operator[](std::string Argument) const
 {
 	//Was given 'Argument' used
 	for(int i = 0 ; i < Commands.size() ; i++){
-		if(Commands[i]->Properties ==  Argument ){
+		if(std::find(Commands[i]->Properties.ValidNames.begin(),Commands[i]->Properties.ValidNames.end(),Argument) != Commands[i]->Properties.ValidNames.end() ){
 			return true;
 		}
 	}
@@ -64,7 +49,7 @@ bool Parser::operator[](std::string Argument) const
 bool Parser::AddCommand(std::string Argument,int Indice, std::vector<Command::Definition> CommandParameters)
 {
 	for(int b = 0 ; b < CommandParameters.size() ; b++){
-		if(CommandParameters[b] == Argument){
+		if(std::find(CommandParameters[b].ValidNames.begin(),CommandParameters[b].ValidNames.end(), Argument) != CommandParameters[b].ValidNames.end()){
 			std::shared_ptr<Command> Temp(new Command(Indice,CommandParameters[b]));
 			this->Commands.push_back(Temp);
 			return true;
@@ -94,22 +79,6 @@ void Parser::Parse(std::vector<std::string> Argv,std::vector<Command::Definition
 	}
 }
 
-
-const Command::Definition& Command::GetProperties(void) const
-{
-	return Properties;
-}
-
-const int& Command::GetIndex(void) const
-{
-	return Index;
-}
-
-const std::vector<std::string>& Command::GetArguments(void) const
-{
-	return Arguments;
-}
-
 Command::Command(int index,Command::Definition Parameters):
 		Index(index),Properties(Parameters)
 {
@@ -128,7 +97,7 @@ bool Command::operator[](std::string Argument) const
 
 bool Command::operator==(std::string Argument) const
 {
-	return Properties ==  Argument;
+	return std::find(Properties.ValidNames.begin(),Properties.ValidNames.end(),Argument) != Properties.ValidNames.end();
 }
 
 bool Command::AddArgument(std::string Argument)
@@ -149,26 +118,12 @@ bool Command::AddArgument(std::string Argument)
 	return false;
 }
 
-bool Command::HasValidArgCount(void) const
+bool Command::Definition::operator==(Command::Definition Argument) const
 {
-	return (Properties.MaxArgCount == -1 || Arguments.size() <= Properties.MaxArgCount)
-		&& Arguments.size() >= Properties.MinArgCount;
-}
-
-bool Command::HasArgument(const std::string& CandArg) const
-{
-	return std::find(Properties.AcceptedArguments.begin(),Properties.AcceptedArguments.end(),CandArg)
-		!= Properties.AcceptedArguments.end()/* || ((Properties.Flags & NoLimit) != false)*/;
-}
-
-bool Command::HasName(const std::string& CandName) const
-{
-	return std::find(Properties.ValidNames.begin(),Properties.ValidNames.end(),CandName) != Properties.ValidNames.end();
-}
-
-bool Command::Definition::operator==(std::string Argument) const
-{
-	return std::find(ValidNames.begin(),ValidNames.end(),Argument) != ValidNames.end();
+	return Argument.ValidNames == this->ValidNames &&
+		Argument.AcceptedArguments == this->AcceptedArguments &&
+		Argument.MinArgCount == this->MinArgCount &&
+		Argument.MaxArgCount == this->MaxArgCount;
 }
 
 std::vector<std::string> GOpp::ConvertArgvToVect(int argc,char **argv)

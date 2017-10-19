@@ -53,26 +53,25 @@ class Command{
 			std::vector<std::string> ValidNames;
 			std::vector<std::string> AcceptedArguments;
 			unsigned MinArgCount;
-			int MaxArgCount;
+			int MaxArgCount;//Change to unsigned after implementing flags.
 			enum class Flags{
 				RequireUniqueArguments = (1 << 0),
 				NoArgumentLimit = (1 << 1),
 				RequireUniqueCommand = (1 << 2)
 			};
 			Flags Flags;//Not implemented yet.
-			bool operator==(std::string Argument) const;
+			bool operator==(const Definition Argument) const;
 		};
 		Command(int index,Definition Parameters);
-		const Definition& GetProperties(void) const;
-		const int& GetIndex(void) const;
-		const std::vector<std::string>& GetArguments(void) const;
-		bool HasName(const std::string& CandName) const;
-		bool HasArgument(const std::string& CandArg) const;
+		inline const Definition& GetProperties(void) const;
+		inline const int& GetIndex(void) const;
+		inline const std::vector<std::string>& GetArguments(void) const;
+		inline bool HasName(const std::string& CandName) const;
+		inline bool HasArgument(const std::string& CandArg) const;
 		bool operator[](const std::string Argument) const;
 		bool operator==(std::string Argument) const;
 	private:
-		bool HasValidArgCount(void) const;
-
+		inline bool HasValidArgCount(void) const;
 		bool AddArgument(std::string Argument);
 		int Index = 0;
 		const Definition Properties;
@@ -87,9 +86,9 @@ class Parser{
 		Parser(std::vector<std::string> Parameters,
 			const std::vector<Command::Definition> CommandParameters = std::vector<Command::Definition>());
 		Parser(const std::initializer_list<std::string> Parameters,const std::initializer_list<Command::Definition> CommandParameters);
-		const std::vector<std::string>& GetArguments(void) const;
-		const std::vector<std::shared_ptr<Command>> GetCommands(void) const; 
-		const std::string GetProgramName(void) const;
+		inline const std::vector<std::string>& GetArguments(void) const;
+		inline const std::vector<std::shared_ptr<Command>> GetCommands(void) const; 
+		inline const std::string GetProgramName(void) const;
 		bool operator[](std::string Argument) const;
 	private:
 		bool AddCommand(std::string Argument, int indice,
@@ -103,6 +102,53 @@ class Parser{
 		std::shared_ptr<Command> LastUsedCommand = nullptr;
 		std::string ProgramName;
 };
+
+inline const std::vector<std::string>& Parser::GetArguments(void) const
+{
+	return Arguments;
+}
+
+inline const std::vector<std::shared_ptr<Command>> Parser::GetCommands(void) const
+{
+	return Commands;
+}
+
+inline const std::string Parser::GetProgramName(void) const
+{
+	return ProgramName;
+}
+
+inline bool Command::HasArgument(const std::string& CandArg) const
+{
+	return std::find(Properties.AcceptedArguments.begin(),Properties.AcceptedArguments.end(),CandArg)
+		!= Properties.AcceptedArguments.end()/* || ((Properties.Flags & NoLimit) != false)*/;
+}
+
+inline bool Command::HasName(const std::string& CandName) const
+{
+	return std::find(Properties.ValidNames.begin(),Properties.ValidNames.end(),CandName) != Properties.ValidNames.end();
+}
+
+inline const Command::Definition& Command::GetProperties(void) const
+{
+	return Properties;
+}
+
+inline const int& Command::GetIndex(void) const
+{
+	return Index;
+}
+
+inline const std::vector<std::string>& Command::GetArguments(void) const
+{
+	return Arguments;
+}
+
+inline bool Command::HasValidArgCount(void) const
+{
+	return (Properties.MaxArgCount == -1 || Arguments.size() <= Properties.MaxArgCount)
+		&& Arguments.size() >= Properties.MinArgCount;
+}
 
 }
 
