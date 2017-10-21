@@ -59,13 +59,13 @@ Test(Constructor,InitializesCommandsProperly)
 	cr_assert(Parser.GetCommands().size() == 1);
 	cr_assert(Parser.GetProgramName() == "./test");
 	cr_assert(Parser.GetProgramName() == Parser.GetArguments()[0]);
-	cr_assert(Parser.GetCommands()[0]->GetIndex() == 1);
-	cr_assert(Parser.GetCommands()[0]->HasName("-l") == true);
+	cr_assert(Parser.GetCommands()[0].GetIndex() == 1);
+	cr_assert(Parser.GetCommands()[0].GetProperties().HasName("-l") == true);
 	cr_assert(Parser["-l"] == true);
-	cr_assert((*Parser.GetCommands()[0]) == "-l");
-	cr_assert((*Parser.GetCommands()[0])["pl-pl"] == true);
-	cr_assert((*Parser.GetCommands()[0])["en-gb"] == false);
-	cr_assert((*Parser.GetCommands()[0]).GetArguments().size() == 1);
+	cr_assert(Parser.GetCommands()[0] == "-l");
+	cr_assert(Parser.GetCommands()[0]["pl-pl"] == true);
+	cr_assert(Parser.GetCommands()[0]["en-gb"] == false);
+	cr_assert(Parser.GetCommands()[0].GetArguments().size() == 1);
 }
 
 Test(Constructor,CconstructorInitializesProperly)
@@ -85,13 +85,13 @@ Test(Constructor,CconstructorInitializesProperly)
 	cr_assert(Parser.GetCommands().size() == 1);
 	cr_assert(Parser.GetProgramName() == "./test");
 	cr_assert(Parser.GetProgramName() == Parser.GetArguments()[0]);
-	cr_assert(Parser.GetCommands()[0]->GetIndex() == 1);
-	cr_assert(Parser.GetCommands()[0]->HasName("-l") == true);
+	cr_assert(Parser.GetCommands()[0].GetIndex() == 1);
+	cr_assert(Parser.GetCommands()[0].GetProperties().HasName("-l") == true);
 	cr_assert(Parser["-l"] == true);
-	cr_assert((*Parser.GetCommands()[0]) == "-l");
-	cr_assert((*Parser.GetCommands()[0])["pl-pl"] == true);
-	cr_assert((*Parser.GetCommands()[0])["en-gb"] == false);
-	cr_assert((*Parser.GetCommands()[0]).GetArguments().size() == 1);
+	cr_assert(Parser.GetCommands()[0] == "-l");
+	cr_assert(Parser.GetCommands()[0]["en-gb"] == false);
+	cr_assert(Parser.GetCommands()[0]["pl-pl"] == true);
+	cr_assert(Parser.GetCommands()[0].GetArguments().size() == 1);
 
 	for(int i = 0; i < Size; i++){
 		delete Argv[i];
@@ -104,7 +104,7 @@ Test(Command,InitializesProperly)
 	const GOpp::Command::Definition Mock = {{"-p"},{"x"},0,1};
 	GOpp::Parser Parser({"./test","-p"},{Mock});
 	cr_assert(Parser.GetCommands().size() == 1);
-	cr_assert(Parser.GetCommands()[0]->GetProperties() == Mock);
+	cr_assert(Parser.GetCommands()[0].GetProperties() == Mock);
 }
 
 Test(MiscFunctions,ConvertArgvToVectArguments)
@@ -132,7 +132,13 @@ Test(MiscFunctions,ConvertArgvToVectArguments)
 	
 	delete mock;
 }
-/* Temporarily not working.. :|
+
+Test(Flags,UnlimitedArgCnt)
+{
+	GOpp::Parser Parser({"./x","-l","1","2","3","4"},{{{"-l"},{},0,0,GOpp::Command::Definition::NoArgumentLimit}});
+	cr_assert(Parser.GetCommands()[0].GetArguments().size() == 4);
+}
+// Temporarily not working.. :|
 Test(MiscFunctions,BuildSymTableExceptions)
 {
 	std::vector<GOpp::Command::Definition> Mock = {{{"-l","--language"},{"-pl-pl"},0,1},{{"-l","-lick"},{"-pl-pl"},0,1}};
@@ -143,8 +149,7 @@ Test(MiscFunctions,BuildSymTableExceptions)
 		return Arg.AcceptedArguments;
 	};
 
-	cr_assert_throw(GOpp::BuildSymTable <std::string, GOpp::Command::Definition> (
-			Mock,GetArgs),std::logic_error);
-	cr_assert_throw(GOpp::BuildSymTable<std::string, GOpp::Command::Definition >(Mock,GetNames) ,std::logic_error);
+	cr_assert_throw(GOpp::BuildSymTable(Mock,GetArgs),std::logic_error); //Relies on template argument deduction.
+	cr_assert_throw(GOpp::BuildSymTable(Mock,GetNames) ,std::logic_error);
 
-}*/
+}

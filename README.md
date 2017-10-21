@@ -29,4 +29,6 @@ as first parameter and argv as second parameter.
 	1. Parameter and argument names collide during parsing.
 This list is incomplete.
 	
-      
+*Font* used in our glorious logo is [Lato](www.latofonts.com/lato-free-fonts/)
+by Łukasz Dziedzic.
+
