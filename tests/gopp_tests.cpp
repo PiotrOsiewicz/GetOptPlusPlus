@@ -44,7 +44,7 @@ Test(Parser,Rubbish)
 
 Test(Constructor,InitializesProperly)
 {
-	GOpp::Parser Parser({"./test"},{{}});
+	GOpp::Parser Parser({"./test"},{});
 	cr_assert(Parser.GetArguments().size() == 1);
 	cr_assert(Parser.GetCommands().size() == 0);
 	cr_assert(Parser.GetProgramName() == "./test");
