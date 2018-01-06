@@ -1,5 +1,5 @@
 CC=g++
-CCFLAGS=-std=c++11 -fPIC -Iinclude/ -fprofile-arcs -ftest-coverage
+CCFLAGS=-std=c++11 -fPIC -Iinclude/
 AR=ar
 ARFLAGS=rvs
 ARTARGET=libgetopt++.a
