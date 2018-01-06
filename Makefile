@@ -3,13 +3,13 @@ CCFLAGS=-std=c++11 -fPIC -Iinclude/
 AR=ar
 ARFLAGS=rvs
 ARTARGET=libgetopt++.a
-ARSOURCE= src/obj/libparser.o src/obj/libcommand.o
+ARSOURCE= src/libparser.o src/libcommand.o
 
 command:
-	$(CC) $(CCFLAGS) -c src/$@.cpp -o src/obj/lib$@.o
+	$(CC) $(CCFLAGS) -c src/$@.cpp -o src/lib$@.o
 
 parser:
-	$(CC) $(CCFLAGS) -c src/$@.cpp -o src/obj/lib$@.o
+	$(CC) $(CCFLAGS) -c src/$@.cpp -o src/lib$@.o
 
 .PHONY: uninstall clean install install_headers
 
@@ -25,5 +25,5 @@ uninstall:
 	rm -r /usr/include/getopt++
 
 clean:
-	rm src/obj/*.a src/obj/*.o
+	rm src/*.a src/*.o
 
