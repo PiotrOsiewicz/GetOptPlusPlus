@@ -1,6 +1,6 @@
 IDIR =/usr/include/getopt++
 CC=g++
-CFLAGS=-I$(IDIR) -std=c++11
+CFLAGS=-I$(IDIR) -std=c++11 -fprofile-arcs -ftest-coverage
 
 ODIR=./obj
 LDI =../lib
