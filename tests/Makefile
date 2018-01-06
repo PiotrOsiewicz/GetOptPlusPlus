@@ -1,17 +1,16 @@
-IDIR =../include
+IDIR =/usr/include/getopt++
 CC=g++
-CFLAGS=-I$(IDIR) -std=c++11 -fprofile-arcs -ftest-coverage
-VPATH=../src
+CFLAGS=-I$(IDIR) -std=c++11
 
-ODIR=../tests/obj
+ODIR=./obj
 LDI =../lib
 
-LIBS=-lcriterion
+LIBS=-lcriterion -lgetopt++
 
-_DEPS = getopt++.h
+_DEPS = misc.h command_impl.h parser_impl.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = getopt++.o gopp_tests.o 
+_OBJ = gopp_tests.o 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.cpp $(DEPS)
