@@ -3,3 +3,4 @@
 *.gcda
 *.gcno
 *.swp
+*.o

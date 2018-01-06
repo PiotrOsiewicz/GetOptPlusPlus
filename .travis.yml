@@ -13,6 +13,7 @@ install:
         - sudo apt-get install -y criterion-dev
 
 script:
+        - sudo make install
         - cd tests && make
         - ./gopp_tests
         - ./get_code_cov.sh
