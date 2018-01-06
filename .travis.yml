@@ -16,7 +16,6 @@ script:
         - sudo make install
         - cd tests && make
         - ./gopp_tests
-        - cd ..
         - ./get_code_cov.sh
 
 after_success: 
